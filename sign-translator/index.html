@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SignFlow — Sign Language Translator</title>
+  <meta name="description" content="Translate English text into American Sign Language with beautiful stick-figure animations. Real-time sign language translation powered by AI." />
+  <meta name="theme-color" content="#0a0e1a" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <!-- Ambient Background -->
+  <div class="ambient-bg">
+    <div class="ambient-orb ambient-orb--1"></div>
+    <div class="ambient-orb ambient-orb--2"></div>
+    <div class="ambient-orb ambient-orb--3"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="header" id="app-header">
+    <div class="header__inner">
+      <a href="/" class="header__logo" id="logo-link">
+        <span class="header__logo-icon">
+          <i data-lucide="hand-metal"></i>
+        </span>
+        <span class="header__logo-text">Sign<span class="gradient-text">Flow</span></span>
+      </a>
+      <nav class="header__nav">
+        <button class="header__nav-btn" id="btn-how-it-works" aria-label="How it works">
+          <i data-lucide="info"></i>
+          <span>How it works</span>
+        </button>
+        <a href="https://github.com/sign/translate" target="_blank" rel="noopener" class="header__nav-btn" id="btn-github" aria-label="GitHub">
+          <i data-lucide="github"></i>
+          <span>GitHub</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main" id="main-content">
+    <!-- Hero Section -->
+    <section class="hero" id="hero-section">
+      <h1 class="hero__title">
+        Translate English to
+        <span class="gradient-text">Sign Language</span>
+      </h1>
+      <p class="hero__subtitle">
+        Type or speak any English text and watch it come alive as American Sign Language — powered by real-time AI translation.
+      </p>
+    </section>
+
+    <!-- Translation Card -->
+    <section class="translator" id="translator-section">
+      <div class="translator__card glass-card">
+        <!-- Language Bar -->
+        <div class="translator__lang-bar">
+          <div class="translator__lang translator__lang--from">
+            <span class="translator__lang-dot translator__lang-dot--en"></span>
+            <span class="translator__lang-label">English</span>
+          </div>
+          <button class="translator__swap-btn" id="btn-swap" aria-label="Swap languages" disabled>
+            <i data-lucide="arrow-right"></i>
+          </button>
+          <div class="translator__lang translator__lang--to">
+            <span class="translator__lang-dot translator__lang-dot--asl"></span>
+            <span class="translator__lang-label">American Sign Language</span>
+          </div>
+        </div>
+
+        <!-- Translation Content -->
+        <div class="translator__content">
+          <!-- Input Panel -->
+          <div class="translator__input-panel" id="input-panel">
+            <textarea
+              id="text-input"
+              class="translator__textarea"
+              placeholder="Type something to translate..."
+              maxlength="500"
+              aria-label="English text to translate"
+              rows="6"
+            ></textarea>
+            <div class="translator__input-footer">
+              <div class="translator__input-actions">
+                <button class="translator__action-btn" id="btn-mic" aria-label="Speech to text">
+                  <i data-lucide="mic"></i>
+                </button>
+                <button class="translator__action-btn" id="btn-clear" aria-label="Clear text">
+                  <i data-lucide="x"></i>
+                </button>
+              </div>
+              <span class="translator__char-count" id="char-count">0 / 500</span>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="translator__divider"></div>
+
+          <!-- Output Panel -->
+          <div class="translator__output-panel" id="output-panel">
+            <!-- Placeholder State -->
+            <div class="translator__placeholder" id="output-placeholder">
+              <div class="translator__placeholder-icon">
+                <i data-lucide="hand-metal"></i>
+              </div>
+              <p class="translator__placeholder-text">Your sign language translation will appear here</p>
+            </div>
+
+            <!-- Loading State -->
+            <div class="translator__loading hidden" id="output-loading">
+              <div class="loading-spinner">
+                <div class="loading-spinner__ring"></div>
+                <div class="loading-spinner__ring"></div>
+                <div class="loading-spinner__ring"></div>
+              </div>
+              <p class="translator__loading-text">Translating...</p>
+            </div>
+
+            <!-- Pose Viewer Container -->
+            <div class="translator__pose-container hidden" id="pose-container">
+              <!-- pose-viewer will be injected here -->
+            </div>
+
+            <!-- Error State -->
+            <div class="translator__error hidden" id="output-error">
+              <div class="translator__error-icon">
+                <i data-lucide="alert-triangle"></i>
+              </div>
+              <p class="translator__error-text" id="error-message">Something went wrong. Please try again.</p>
+              <button class="btn btn--ghost" id="btn-retry">
+                <i data-lucide="refresh-cw"></i>
+                Retry
+              </button>
+            </div>
+
+            <!-- Output Actions (shown when pose is visible) -->
+            <div class="translator__output-actions hidden" id="output-actions">
+              <button class="translator__action-btn" id="btn-download" aria-label="Download video">
+                <i data-lucide="download"></i>
+              </button>
+              <button class="translator__action-btn" id="btn-share" aria-label="Share">
+                <i data-lucide="share-2"></i>
+              </button>
+              <button class="translator__action-btn" id="btn-fullscreen" aria-label="Fullscreen">
+                <i data-lucide="maximize-2"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Phrases -->
+      <div class="quick-phrases" id="quick-phrases">
+        <p class="quick-phrases__label">Try these:</p>
+        <div class="quick-phrases__list">
+          <button class="quick-phrases__btn" data-text="Hello, how are you?">👋 Hello, how are you?</button>
+          <button class="quick-phrases__btn" data-text="Thank you very much">🙏 Thank you very much</button>
+          <button class="quick-phrases__btn" data-text="My name is">✨ My name is</button>
+          <button class="quick-phrases__btn" data-text="Nice to meet you">😊 Nice to meet you</button>
+          <button class="quick-phrases__btn" data-text="I love sign language">❤️ I love sign language</button>
+          <button class="quick-phrases__btn" data-text="Good morning">🌅 Good morning</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features-section">
+      <div class="features__grid">
+        <div class="feature-card glass-card">
+          <div class="feature-card__icon">
+            <i data-lucide="zap"></i>
+          </div>
+          <h3 class="feature-card__title">Real-Time Translation</h3>
+          <p class="feature-card__desc">Instantly convert English text into animated American Sign Language as you type.</p>
+        </div>
+        <div class="feature-card glass-card">
+          <div class="feature-card__icon">
+            <i data-lucide="mic"></i>
+          </div>
+          <h3 class="feature-card__title">Voice Input</h3>
+          <p class="feature-card__desc">Speak naturally and let our app convert your speech into sign language.</p>
+        </div>
+        <div class="feature-card glass-card">
+          <div class="feature-card__icon">
+            <i data-lucide="monitor-smartphone"></i>
+          </div>
+          <h3 class="feature-card__title">Works Everywhere</h3>
+          <p class="feature-card__desc">Beautiful on desktop, tablet, and mobile. No installation required.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- How It Works Modal -->
+  <div class="modal-overlay hidden" id="modal-overlay">
+    <div class="modal glass-card" id="modal-how-it-works">
+      <button class="modal__close" id="btn-modal-close" aria-label="Close modal">
+        <i data-lucide="x"></i>
+      </button>
+      <h2 class="modal__title">How It <span class="gradient-text">Works</span></h2>
+      <div class="modal__steps">
+        <div class="modal__step">
+          <div class="modal__step-num">1</div>
+          <div class="modal__step-content">
+            <h4>Enter Your Text</h4>
+            <p>Type or speak English text into the translation box. You can enter up to 500 characters.</p>
+          </div>
+        </div>
+        <div class="modal__step">
+          <div class="modal__step-num">2</div>
+          <div class="modal__step-content">
+            <h4>AI Translation</h4>
+            <p>Our AI model converts your text into a sequence of sign language poses in real time.</p>
+          </div>
+        </div>
+        <div class="modal__step">
+          <div class="modal__step-num">3</div>
+          <div class="modal__step-content">
+            <h4>Watch the Animation</h4>
+            <p>A stick-figure avatar performs the signs with accurate hand, body, and facial movements.</p>
+          </div>
+        </div>
+      </div>
+      <p class="modal__note">Powered by <a href="https://sign.mt" target="_blank" rel="noopener">sign.mt</a> translation models.</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer" id="app-footer">
+    <div class="footer__inner">
+      <p class="footer__text">
+        Built with ❤️ · Powered by <a href="https://sign.mt" target="_blank" rel="noopener">sign.mt</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- Mic listening toast -->
+  <div class="mic-toast hidden" id="mic-toast">
+    <div class="mic-toast__pulse"></div>
+    <i data-lucide="mic"></i>
+    <span>Listening...</span>
+    <button class="mic-toast__stop" id="btn-mic-stop" aria-label="Stop listening">Stop</button>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
