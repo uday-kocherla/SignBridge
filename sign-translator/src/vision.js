@@ -4,7 +4,6 @@ import * as handpose from '@tensorflow-models/handpose';
 import fp from 'fingerpose';
 
 // --- GESTURE DEFINITIONS ---
-// --- GESTURE DEFINITIONS ---
 // A-Z ASL Alphabet Definitions using Fingerpose
 const { Finger, FingerCurl, FingerDirection, GestureDescription } = fp;
 
