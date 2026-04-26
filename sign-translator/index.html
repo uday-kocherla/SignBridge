@@ -65,14 +65,14 @@
       <div class="translator__card glass-card">
         <!-- Language Bar -->
         <div class="translator__lang-bar">
-          <div class="translator__lang translator__lang--from">
+          <div class="translator__lang translator__lang--from" id="lang-from">
             <span class="translator__lang-dot translator__lang-dot--en"></span>
             <span class="translator__lang-label">English</span>
           </div>
-          <button class="translator__swap-btn" id="btn-swap" aria-label="Swap languages" disabled>
-            <i data-lucide="arrow-right"></i>
+          <button class="translator__swap-btn" id="btn-swap" aria-label="Swap languages">
+            <i data-lucide="arrow-right-left"></i>
           </button>
-          <div class="translator__lang translator__lang--to">
+          <div class="translator__lang translator__lang--to" id="lang-to">
             <span class="translator__lang-dot translator__lang-dot--asl"></span>
             <span class="translator__lang-label">American Sign Language</span>
           </div>
@@ -80,80 +80,128 @@
 
         <!-- Translation Content -->
         <div class="translator__content">
-          <!-- Input Panel -->
-          <div class="translator__input-panel" id="input-panel">
-            <textarea
-              id="text-input"
-              class="translator__textarea"
-              placeholder="Type something to translate..."
-              maxlength="500"
-              aria-label="English text to translate"
-              rows="6"
-            ></textarea>
-            <div class="translator__input-footer">
-              <div class="translator__input-actions">
-                <button class="translator__action-btn" id="btn-mic" aria-label="Speech to text">
-                  <i data-lucide="mic"></i>
-                </button>
-                <button class="translator__action-btn" id="btn-clear" aria-label="Clear text">
-                  <i data-lucide="x"></i>
+          <!-- ENGLISH TO ASL MODE -->
+          <div class="translator__mode" id="mode-en-to-asl">
+            <!-- Input Panel -->
+            <div class="translator__input-panel">
+              <textarea
+                id="text-input"
+                class="translator__textarea"
+                placeholder="Type something to translate..."
+                maxlength="500"
+                aria-label="English text to translate"
+                rows="6"
+              ></textarea>
+              <div class="translator__input-footer">
+                <div class="translator__input-actions">
+                  <button class="translator__action-btn" id="btn-mic" aria-label="Speech to text">
+                    <i data-lucide="mic"></i>
+                  </button>
+                  <button class="translator__action-btn" id="btn-clear" aria-label="Clear text">
+                    <i data-lucide="x"></i>
+                  </button>
+                </div>
+                <span class="translator__char-count" id="char-count">0 / 500</span>
+              </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="translator__divider"></div>
+
+            <!-- Output Panel -->
+            <div class="translator__output-panel">
+              <!-- Placeholder State -->
+              <div class="translator__placeholder" id="output-placeholder">
+                <div class="translator__placeholder-icon">
+                  <i data-lucide="hand-metal"></i>
+                </div>
+                <p class="translator__placeholder-text">Your sign language translation will appear here</p>
+              </div>
+
+              <!-- Loading State -->
+              <div class="translator__loading hidden" id="output-loading">
+                <div class="loading-spinner">
+                  <div class="loading-spinner__ring"></div>
+                  <div class="loading-spinner__ring"></div>
+                  <div class="loading-spinner__ring"></div>
+                </div>
+                <p class="translator__loading-text">Translating...</p>
+              </div>
+
+              <!-- Pose Viewer Container -->
+              <div class="translator__pose-container hidden" id="pose-container">
+                <!-- pose-viewer will be injected here -->
+              </div>
+
+              <!-- Error State -->
+              <div class="translator__error hidden" id="output-error">
+                <div class="translator__error-icon">
+                  <i data-lucide="alert-triangle"></i>
+                </div>
+                <p class="translator__error-text" id="error-message">Something went wrong. Please try again.</p>
+                <button class="btn btn--ghost" id="btn-retry">
+                  <i data-lucide="refresh-cw"></i>
+                  Retry
                 </button>
               </div>
-              <span class="translator__char-count" id="char-count">0 / 500</span>
+
+              <!-- Output Actions -->
+              <div class="translator__output-actions hidden" id="output-actions">
+                <button class="translator__action-btn" id="btn-download" aria-label="Download video">
+                  <i data-lucide="download"></i>
+                </button>
+                <button class="translator__action-btn" id="btn-share" aria-label="Share">
+                  <i data-lucide="share-2"></i>
+                </button>
+                <button class="translator__action-btn" id="btn-fullscreen" aria-label="Fullscreen">
+                  <i data-lucide="maximize-2"></i>
+                </button>
+              </div>
             </div>
           </div>
 
-          <!-- Divider -->
-          <div class="translator__divider"></div>
-
-          <!-- Output Panel -->
-          <div class="translator__output-panel" id="output-panel">
-            <!-- Placeholder State -->
-            <div class="translator__placeholder" id="output-placeholder">
-              <div class="translator__placeholder-icon">
-                <i data-lucide="hand-metal"></i>
+          <!-- ASL TO ENGLISH MODE -->
+          <div class="translator__mode hidden" id="mode-asl-to-en">
+            <!-- Camera Input Panel -->
+            <div class="translator__input-panel translator__camera-panel">
+              <div class="translator__camera-container">
+                <video id="webcam-video" class="translator__camera-video" playsinline autoplay muted></video>
+                <canvas id="webcam-canvas" class="translator__camera-canvas"></canvas>
+                
+                <div class="translator__camera-overlay" id="camera-overlay">
+                  <i data-lucide="camera"></i>
+                  <p>Click to enable camera</p>
+                  <button class="btn btn--ghost mt-4" id="btn-start-camera">
+                    Allow Camera Access
+                  </button>
+                </div>
               </div>
-              <p class="translator__placeholder-text">Your sign language translation will appear here</p>
             </div>
 
-            <!-- Loading State -->
-            <div class="translator__loading hidden" id="output-loading">
-              <div class="loading-spinner">
-                <div class="loading-spinner__ring"></div>
-                <div class="loading-spinner__ring"></div>
-                <div class="loading-spinner__ring"></div>
+            <!-- Divider -->
+            <div class="translator__divider"></div>
+
+            <!-- English Output Panel -->
+            <div class="translator__output-panel translator__text-output-panel">
+              <div class="translator__detected-text-container">
+                <p class="translator__detected-label">Detected Sign:</p>
+                <h2 class="translator__detected-char" id="detected-char">-</h2>
+                
+                <p class="translator__detected-label mt-8">Message:</p>
+                <div class="translator__message-box">
+                  <p id="detected-message" class="translator__message-text">Waiting for signs...</p>
+                </div>
               </div>
-              <p class="translator__loading-text">Translating...</p>
-            </div>
 
-            <!-- Pose Viewer Container -->
-            <div class="translator__pose-container hidden" id="pose-container">
-              <!-- pose-viewer will be injected here -->
-            </div>
-
-            <!-- Error State -->
-            <div class="translator__error hidden" id="output-error">
-              <div class="translator__error-icon">
-                <i data-lucide="alert-triangle"></i>
+              <!-- Output Actions -->
+              <div class="translator__output-actions">
+                <button class="translator__action-btn" id="btn-speak-text" aria-label="Speak text">
+                  <i data-lucide="volume-2"></i>
+                </button>
+                <button class="translator__action-btn" id="btn-clear-message" aria-label="Clear message">
+                  <i data-lucide="trash-2"></i>
+                </button>
               </div>
-              <p class="translator__error-text" id="error-message">Something went wrong. Please try again.</p>
-              <button class="btn btn--ghost" id="btn-retry">
-                <i data-lucide="refresh-cw"></i>
-                Retry
-              </button>
-            </div>
-
-            <!-- Output Actions (shown when pose is visible) -->
-            <div class="translator__output-actions hidden" id="output-actions">
-              <button class="translator__action-btn" id="btn-download" aria-label="Download video">
-                <i data-lucide="download"></i>
-              </button>
-              <button class="translator__action-btn" id="btn-share" aria-label="Share">
-                <i data-lucide="share-2"></i>
-              </button>
-              <button class="translator__action-btn" id="btn-fullscreen" aria-label="Fullscreen">
-                <i data-lucide="maximize-2"></i>
-              </button>
             </div>
           </div>
         </div>

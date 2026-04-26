@@ -1,4 +1,5 @@
 import 'pose-viewer/loader';
+import { VisionPipeline } from './vision.js';
 
 // Initialize Lucide icons
 lucide.createIcons();
@@ -24,6 +25,16 @@ const quickPhraseBtns = document.querySelectorAll('.quick-phrases__btn');
 const modalOverlay = document.getElementById('modal-overlay');
 const btnHowItWorks = document.getElementById('btn-how-it-works');
 const btnModalClose = document.getElementById('btn-modal-close');
+
+// Swap & ASL to English Elements
+const btnSwap = document.getElementById('btn-swap');
+const langFrom = document.getElementById('lang-from');
+const langTo = document.getElementById('lang-to');
+const modeEnToAsl = document.getElementById('mode-en-to-asl');
+const modeAslToEn = document.getElementById('mode-asl-to-en');
+const btnStartCamera = document.getElementById('btn-start-camera');
+const btnClearMessage = document.getElementById('btn-clear-message');
+const btnSpeakText = document.getElementById('btn-speak-text');
 
 // Mic Toast
 const micToast = document.getElementById('mic-toast');
@@ -160,6 +171,68 @@ quickPhraseBtns.forEach(btn => {
     updateCharCount();
     triggerTranslation();
   });
+});
+
+// Mode Swapping
+let currentMode = 'en-to-asl';
+const visionPipeline = new VisionPipeline();
+
+btnSwap.addEventListener('click', async () => {
+  if (currentMode === 'en-to-asl') {
+    // Switch to ASL to English
+    currentMode = 'asl-to-en';
+    langFrom.querySelector('.translator__lang-label').textContent = 'American Sign Language';
+    langFrom.querySelector('.translator__lang-dot').className = 'translator__lang-dot translator__lang-dot--asl';
+    langTo.querySelector('.translator__lang-label').textContent = 'English';
+    langTo.querySelector('.translator__lang-dot').className = 'translator__lang-dot translator__lang-dot--en';
+    
+    modeEnToAsl.classList.add('hidden');
+    modeAslToEn.classList.remove('hidden');
+    
+    // Initialize AI
+    const ready = await visionPipeline.initialize();
+    if (ready) {
+      btnStartCamera.textContent = 'Start Camera';
+    }
+  } else {
+    // Switch to English to ASL
+    currentMode = 'en-to-asl';
+    langFrom.querySelector('.translator__lang-label').textContent = 'English';
+    langFrom.querySelector('.translator__lang-dot').className = 'translator__lang-dot translator__lang-dot--en';
+    langTo.querySelector('.translator__lang-label').textContent = 'American Sign Language';
+    langTo.querySelector('.translator__lang-dot').className = 'translator__lang-dot translator__lang-dot--asl';
+    
+    modeAslToEn.classList.add('hidden');
+    modeEnToAsl.classList.remove('hidden');
+    
+    visionPipeline.stopCamera();
+  }
+});
+
+// Camera controls
+btnStartCamera.addEventListener('click', async () => {
+  if (!visionPipeline.model) {
+      alert("AI model is still loading. Please wait a moment.");
+      return;
+  }
+  
+  const success = await visionPipeline.startCamera();
+  if (success) {
+    visionPipeline.isTracking = true;
+    visionPipeline.track();
+  }
+});
+
+btnClearMessage.addEventListener('click', () => {
+    visionPipeline.clearMessage();
+});
+
+btnSpeakText.addEventListener('click', () => {
+    const msg = visionPipeline.message;
+    if (msg && msg !== 'Waiting for signs...') {
+        const utterance = new SpeechSynthesisUtterance(msg);
+        speechSynthesis.speak(utterance);
+    }
 });
 
 // Modal handling

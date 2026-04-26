@@ -1,4 +1,5 @@
-import {defineConfig} from 'vite';
+// Set up Vite to also resolve src/vision.js
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   server: {
@@ -6,6 +7,11 @@ export default defineConfig({
     open: true
   },
   build: {
-    outDir: 'dist'
+    outDir: 'dist',
+    rollupOptions: {
+      input: {
+        main: 'index.html'
+      }
+    }
   }
 });
